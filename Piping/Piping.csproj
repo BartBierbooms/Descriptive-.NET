@@ -8,6 +8,7 @@
     <Version>2.0.0</Version>
     <Authors>Bart Bierbooms</Authors>
     <PackageProjectUrl>https://github.com/BartBierbooms/Descriptive-.NET</PackageProjectUrl>
+    <PackageReleaseNotes>See documentation at the nuget site.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
