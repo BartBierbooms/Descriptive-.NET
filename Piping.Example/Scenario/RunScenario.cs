@@ -31,7 +31,7 @@ namespace Piping.Example.ExampleBusiness.Scenario
               .Then(basket => BasketScenario.addDiscountForPremiumCustomers((basket.Product, basket.Customer)))
               .Then(basket => BasketScenario.reserveAndPriceProduct(basket))
               .Then(basket => BasketScenario.saveBasket(basket))
-              .TransForm(FromBasketToMail, Pipe.Init<Mail, OrderResult>(() => new OrderResult()), FromBasket);
+              .Transform(FromBasketToMail, Pipe.Init<Mail, OrderResult>(() => new OrderResult()), FromBasket);
 
             var pipeResult = executeBasketOrder(Test.CreateTestData());
 

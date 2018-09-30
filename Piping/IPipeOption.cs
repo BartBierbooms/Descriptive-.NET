@@ -8,7 +8,7 @@ namespace Piping
         IList<IValueAndSupplementExtension> Extensions { get; }
     }
 
-    internal class PipeOption : IPipeOption
+    public class PipeOption : IPipeOption
     {
         internal readonly bool? ConditionMet;
         private readonly IList<IValueAndSupplementExtension> definedExtension;
@@ -17,10 +17,11 @@ namespace Piping
 
         public IList<IValueAndSupplementExtension> Extensions => definedExtension;
 
-        internal PipeOption(bool? conditionIsMet, IList<IValueAndSupplementExtension> extensions)
+        public PipeOption(bool? conditionIsMet, IList<IValueAndSupplementExtension> extensions)
         {
             ConditionMet = conditionIsMet;
             definedExtension = extensions;
         }
+        public static PipeOption PipeOptionNone {get{return new PipeOption(null, null);}} 
     }
 }
