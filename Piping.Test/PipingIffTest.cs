@@ -83,8 +83,31 @@ namespace Piping.Test
             Assert.IsTrue(pipelineResult.Val.NeedFuel);
             Assert.IsTrue(pipelineResult.Val.Parked);
         }
+		[TestMethod]
+		public void iff_ExecuteFirstPredicateAndContinueAfterEndIf2()
+		{
+			var carInit = Pipe.Init<Car, Unit>(_ => new Unit())
+				.Then(c => c.Mark = Car.HondaMark)
+				.Iff(CarExt.IsHonda)
+					.Then(CarExt.DriveFast)
+					.Then(CarExt.DriveFar)
+				.Iff(CarExt.IsToyota)
+					.Then(CarExt.DriveSlow)
+				.EndIff()
+				.Then(CarExt.Park);
 
-        [TestMethod]
+			var pipelineResult = (Option<Car, Unit>)carInit(new Car());
+
+			Assert.IsTrue(pipelineResult.GetOptionType == OptionType.Some);
+			Assert.IsInstanceOfType(pipelineResult.SupplementVal, typeof(Unit));
+			Assert.IsInstanceOfType(pipelineResult.Val, typeof(Car));
+			Assert.IsTrue(pipelineResult.Val.Speed == Car.SpeedFast);
+			Assert.IsTrue(pipelineResult.Val.NeedFuel);
+			Assert.IsTrue(pipelineResult.Val.Parked);
+		}
+
+
+		[TestMethod]
         public void iff_ExecuteSecondPredicateAndContinueAfterEndIf()
         {
             var carInit = Pipe.Init<Car, Unit>(_ => new Unit())

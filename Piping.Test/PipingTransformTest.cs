@@ -34,7 +34,7 @@ namespace Piping.Test
                 .Then(c => c.SetMark(Car.HondaMark))
                 .Then(d => d.Reputation = Dealer.eReputation.Good)
                 .Then(carAndDealer => carAndDealer.SupplementVal.GiveDiscount(carAndDealer.Val))
-                .TransForm(carToPrice, payTime, chargeCustomer);
+                .Transform(carToPrice, payTime, chargeCustomer);
 
             var pipelineResult = (Option<Price, Customer>)carInit(new Car());
 
@@ -68,7 +68,7 @@ namespace Piping.Test
                 .Then(c => c.SetMark(Car.HondaMark))
                 .Then(d => d.Reputation = Dealer.eReputation.Good)
                 .Then(dealerAndCar => dealerAndCar.Val.GiveDiscount(dealerAndCar.SupplementVal))
-                .TransForm(carToPrice, payTime, chargeCustomer);
+                .Then(carToPrice, payTime, chargeCustomer);
 
             var pipelineResult = (Option<Price, Customer>)carInit(new Dealer());
 
@@ -91,7 +91,7 @@ namespace Piping.Test
                .Then(c => c.SetMark(Car.HondaMark))
                .Then(d => d.Reputation = Dealer.eReputation.Good)
                .Then(carAndDealer => carAndDealer.SupplementVal.GiveDiscount(carAndDealer.Val))
-               .TransForm(ToCustomer);
+               .Transform(ToCustomer);
 
             var pipelineResult = (Option<Customer, Dealer>)carInit(new Car());
 
@@ -113,7 +113,7 @@ namespace Piping.Test
             var carInit = Pipe.Init<Car, Dealer>(_ => new Dealer())
                .Then(c => c.SetMark(Car.HondaMark))
                .Then(d => d.Reputation = Dealer.eReputation.Good)
-               .TransForm(ToCustomer);
+               .Transform(ToCustomer);
 
             var pipelineResult = (Option<Car, Customer>)carInit(new Car());
 
@@ -127,7 +127,7 @@ namespace Piping.Test
         [TestMethod]
         public void Transform_TransFormTheValFromCarToCustomerAndInitializeNewSupplementedValue()
         {
-            Customer ToCustomer(Car Car)
+            Customer ToCustomer(Car car)
             {
                 return new Customer() { BankAccount = 23000M };
             }
@@ -135,7 +135,7 @@ namespace Piping.Test
             var carInit = Pipe.Init<Car, Dealer>(_ => new Dealer())
                .Then(c => c.SetMark(Car.HondaMark))
                .Then(d => d.Reputation = Dealer.eReputation.Good)
-               .TransForm(ToCustomer, () => new Price());
+               .Transform(ToCustomer, () => new Price());
 
             var pipelineResult = (Option<Customer, Price>)carInit(new Car());
 
@@ -146,7 +146,7 @@ namespace Piping.Test
 
         }
 
-        [TestMethod]
+		[TestMethod]
         public void Transform_TransFormTheSupplementedFromDealerToCustomerAndInitializeNewSupplementedValue()
         {
             Customer ToCustomer(Dealer dealer)
@@ -157,7 +157,7 @@ namespace Piping.Test
             var carInit = Pipe.Init<Car, Dealer>(_ => new Dealer())
                .Then(c => c.SetMark(Car.HondaMark))
                .Then(d => d.Reputation = Dealer.eReputation.Good)
-               .TransForm(ToCustomer, () => new Price());
+               .Transform(ToCustomer, () => new Price());
 
             var pipelineResult = (Option<Customer, Price>)carInit(new Car());
 
@@ -184,7 +184,7 @@ namespace Piping.Test
             var carInit = Pipe.Init<Car, Dealer>(_ => new Dealer())
                .Then(c => c.SetMark(Car.HondaMark))
                .Then(d => d.Reputation = Dealer.eReputation.Good)
-               .TransForm(ToCustomer, priceInit);
+               .Transform(ToCustomer, priceInit);
 
             var pipelineResult = (Option<Customer, Price>)carInit(new Car());
 
@@ -211,7 +211,7 @@ namespace Piping.Test
             var carInit = Pipe.Init<Car, Dealer>(_ => new Dealer())
                .Then(c => c.SetMark(Car.HondaMark))
                .Then(d => d.Reputation = Dealer.eReputation.Good)
-               .TransForm(ToCustomer, priceInit);
+               .Transform(ToCustomer, priceInit);
 
             var pipelineResult = (Option<Customer, Price>)carInit(new Car());
 

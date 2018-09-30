@@ -29,6 +29,7 @@ namespace Piping.Test
         [TestMethod]
         public void CheckValidation()
         {
+
             var carInit = Pipe.Init<Unit, CarWithIInvariant>(_ => new CarWithIInvariant())
                 .Then(c => c.Mark = "Honda")
                 .Iff(CarExt.IsHonda)

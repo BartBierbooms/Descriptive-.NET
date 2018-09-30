@@ -55,5 +55,22 @@ namespace Piping.Test
             Assert.IsInstanceOfType(pipelineResult.Val, typeof(Car));
             Assert.IsTrue(log.Logs.Count == 1);
         }
+
+		[TestMethod]
+		public void Init_WithExplicitExecType()
+		{
+
+			Log log = new Log();
+			var postProcesses = new List<IValueAndSupplementExtension>();
+			postProcesses.Add(log);
+
+			var pipeline = Pipe.Init<Car, Unit>(() => new Unit(), postProcesses, new None<Car, Unit>(null));
+
+			var pipelineResult = (Option<Car, Unit>)pipeline(new Car());
+
+			Assert.IsTrue(pipelineResult.GetOptionType == OptionType.Some);
+			Assert.IsInstanceOfType(pipelineResult.Val, typeof(Car));
+			Assert.IsTrue(log.Logs.Count == 1);
+        }
     }
 }
