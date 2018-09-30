@@ -1,4 +1,4 @@
-# Descriptive-.NET
+# Descriptive-.NET (version 2.0)
 Roughly speaking, in OO the object has a state and methods working on that state. For instance, you have a class Payment and a method HasPositiveBalance. The Payment, the transaction involved, the account balance, it is all encompasses in the Payment class.
 In real life the playing ground is more complicated, because Payment can operate in a lot of different contexts. For example  in payment clearing, or in payment compliance or in complicated scenario where the payment tax relation is important or where currencies and exchanges are important or in a bookkeeping context with its rounding off problems. You cannot make a Payment class that encompass all the payments parts of these contexts. There is a growing believe that you should not even strive to make such a class. Reuse is perfect for 'technical' classes such as DataTable, or HttpContext, but it won't work for real life business classes like Payment.
 Payment gets a meaning because it is acting in a specific context, for instance compliance  where the ultimate beneficial owner should be known. And payment and compliance can act in yet another context, for instance a criminal investigation etc..
@@ -31,7 +31,7 @@ public static ToValueSupplementValue<TI, TI, TV> Init<TI, TV>(Func<TI, TV> init)
 };
 ```
 My pipe start will be:
-````
+```
 var pipeDefine = Pipe.Init<Payment, Compliance>(_ => new Compliance())
 var pipeExecute = pipeDefine(new Payment());
 ```
@@ -71,3 +71,6 @@ public static ToValueSupplementValue<TI, TS, TV> Then<TI, TV, TS>(this ToValueSu
 }
 ```     
 When a pipe segment gets a None or SomeException as its input, it will immediately return the None or SomeException. It will skip any implementation defined in the action delegate Apply, which is essentially what you want the Then to perform. In other words the None and SomeException 'stops' any further processing of the pipe.
+
+# Version 2. Possibility to override the default Option return type.
+With this version, you can write overwrite the default Option base implementation. As an example i made a separate project with a Validator implementation through a validation class. In stead of an Option, a Validation is returned, which combines validation results or exceptions and a real object representing the business result of a successful pipe execution. This perfectly fits with a Web service situation, where you want to validate your input and execute some logic, but you don't want Exceptions to bubble up to the caller in their original form. Validation errors have a direct impact on the returned response. There can be multiple sources that can return validation results. For the Validation i have added Join and JoinIfValid, which internally are Then-implementations. Join and JoinIfValid specify in a better way the purpose of a Validate pipeline.
