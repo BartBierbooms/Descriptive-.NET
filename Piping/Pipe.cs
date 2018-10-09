@@ -644,21 +644,43 @@ namespace Piping
 				return pipeInput.WrapPipeLineResult(toNewValueState.Val, toNewValueState.SupplementVal, pipeOption);
 			});
 		}
+        /// <summary>
+        /// Joins two pipe segments with identical output types. The output Value object of first pipeline serves as input for the second and the supplemented value of the first pipeline will be the Supplemented value of the second pipeline.
+        /// </summary>
+        /// <typeparam name="TI">The type of the object that is passed into the pipeline delegate when invoked.</typeparam>
+        /// <typeparam name="TV">The type of the object that is returned as the Val of the IValueAndSupplement interface.</typeparam>
+        /// <typeparam name="TS">The type that is the Supplemented value of the source parameter and the the Supplemented value of the newPipeSegment parameter.</typeparam>
+        /// <param name="source">The pipe source object of type ToValueSupplementValue.</param>
+        /// <param name="newPipeSegment">The pipesegment to join with the pipe source object.</param>
+        /// <returns>An object of type ToValueSupplementValue (Func delegate that returns an object that implements the IValueAndSupplement interface when invoked with an object of type TI.</returns>
+        public static ToValueSupplementValue<TI, TV, TS> Join<TI, TV, TS>(
+            this ToValueSupplementValue<TI, TV, TS> source,
+            ToValueSupplementValue<TV, TV, TS> newPipeSegment)
+            where TV : new()
+            where TS : new()
+        {
+			TV ToNewValue(TV pipeInut)
+			{
+				return pipeInut;
+			}
 
-		/// <summary>
-		/// Transform: Converts one or both types of the IValueAndSupplement source interface.
-		/// </summary>
-		/// <typeparam name="TI">The type of the object that is passed into the pipeline delegate when invoked.</typeparam>
-		/// <typeparam name="TV">The type of the object that is returned as the Val of the IValueAndSupplement interface.</typeparam>
-		/// <typeparam name="TW">The type of the object that is returned as the Supplemented value of the IValueAndSupplement interface.</typeparam>
-		/// <typeparam name="TR"></typeparam>
-		/// <typeparam name="TS">The type that is the Supplemented value of the source parameter.</typeparam>
-		/// <param name="source">The pipe source object of type ToValueSupplementValue</param>
-		/// <param name="toNewValue"></param>
-		/// <param name="newValueAndSupplement"></param>
-		/// <param name="onValue"></param>
-		/// <returns>An object of type ToValueSupplementValue (Func delegate that returns an object that implements the IValueAndSupplement interface when invoked with an object of type TI.</returns>
-		public static ToValueSupplementValue<TI, TW, TR> Transform<TI, TV, TW, TR, TS>(
+			return source.Transform(ToNewValue, newPipeSegment, (TS suplementedValueSource, TS suplementedValuePipeSegment) => { suplementedValuePipeSegment = suplementedValueSource; });
+		}
+
+        /// <summary>
+        /// Transform: Converts one or both types of the IValueAndSupplement source interface.
+        /// </summary>
+        /// <typeparam name="TI">The type of the object that is passed into the pipeline delegate when invoked.</typeparam>
+        /// <typeparam name="TV">The type of the object that is returned as the Val of the IValueAndSupplement interface.</typeparam>
+        /// <typeparam name="TW">The type of the object that is returned as the Supplemented value of the IValueAndSupplement interface.</typeparam>
+        /// <typeparam name="TR"></typeparam>
+        /// <typeparam name="TS">The type that is the Supplemented value of the source parameter.</typeparam>
+        /// <param name="source">The pipe source object of type ToValueSupplementValue</param>
+        /// <param name="toNewValue"></param>
+        /// <param name="newValueAndSupplement"></param>
+        /// <param name="onValue"></param>
+        /// <returns>An object of type ToValueSupplementValue (Func delegate that returns an object that implements the IValueAndSupplement interface when invoked with an object of type TI.</returns>
+        public static ToValueSupplementValue<TI, TW, TR> Transform<TI, TV, TW, TR, TS>(
 			this ToValueSupplementValue<TI, TV, TS> source,
 			Func<PipeBase<TV, TS>, TW> toNewValue,
 			Func<ToValueSupplementValue<TW, TW, TR>> newValueAndSupplement,

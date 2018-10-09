@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net46;net47</TargetFrameworks>
     <Description>A library that implements piping of subsequent methods, including the possibility of if-branching and combining pipes together.</Description>
     <Copyright>Bart Bierbooms 2018</Copyright>
     <PackageTags>Functional programming Fluent interface</PackageTags>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Piping.Test.TestData;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,55 @@ namespace Piping.Test
     [TestClass]
     public class PipingTransformTest
     {
+
+		[TestMethod]
+		public void Join_PipeSegments()
+		{
+
+			var hondaSegment = Pipe.Init<Car, Dealer>(_ => new Dealer())
+				.Then(c => c.SetMark(Car.HondaMark))
+				.Then(d => d.Reputation = Dealer.eReputation.Good);
+
+			var hondaDealerSegment = Pipe.Init<Car, Dealer>(() => new Dealer())
+				.Then(c => c.DriveFast());
+
+			var joinedPipe = hondaSegment.Join(hondaDealerSegment);
+
+			var pipelineResult = (Option<Car, Dealer>)joinedPipe(new Car());
+
+			Assert.IsTrue(pipelineResult.GetOptionType == OptionType.Some);
+			Assert.IsInstanceOfType(pipelineResult.Val, typeof(Car));
+			Assert.IsInstanceOfType(pipelineResult.SupplementVal, typeof(Dealer));
+			Assert.IsTrue(pipelineResult.SupplementVal.Reputation == Dealer.eReputation.Good);
+			Assert.IsTrue(pipelineResult.Val.Speed== Car.SpeedFast);
+
+        }
+
+		[TestMethod]
+		public void Join_PipeSegmentsError()
+		{
+			int nr = 0;
+			int aLot = 20;
+
+			var hondaSegment = Pipe.Init<Car, Dealer>(_ => new Dealer())
+				.Then(c => c.SetMark(Car.HondaMark))
+				.Then(d =>
+				{
+					d.Reputation = Dealer.eReputation.Good;
+					var wontwork = aLot / nr;
+				});
+
+			var hondaDealerSegment = Pipe.Init<Car, Dealer>(() => new Dealer())
+				.Then(c => c.DriveFast());
+
+			var joinedPipe = hondaSegment.Join(hondaDealerSegment);
+            var pipelineResult = (Option<Car, Dealer>)joinedPipe(new Car());
+
+			Assert.IsTrue(pipelineResult.GetOptionType == OptionType.Exception);
+			Assert.IsTrue(pipelineResult.ExceptionVal is InvalidOperationException);
+        }
+
+
         [TestMethod]
         public void Transform_CarAndDealerToPriceAndCustomer()
         {

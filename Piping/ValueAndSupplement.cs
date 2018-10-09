@@ -11,7 +11,6 @@
             supplementPart = supplement;
         }
 
-        public (TV, TS) Pair => (value, supplementPart);
         public TV Val => value;
 
         public TS SupplementVal => supplementPart;
