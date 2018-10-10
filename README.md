@@ -69,8 +69,26 @@ public static ToValueSupplementValue<TI, TS, TV> Then<TI, TV, TS>(this ToValueSu
      //Only execute Action in case of Source is Some.
      [real Action implementation]
 }
-```     
+```
 When a pipe segment gets a None or SomeException as its input, it will immediately return the None or SomeException. It will skip any implementation defined in the action delegate Apply, which is essentially what you want the Then to perform. In other words the None and SomeException 'stops' any further processing of the pipe.
 
 # Version 2. Possibility to override the default Option return type.
 With this version, you can write overwrite the default Option base implementation. As an example i made a separate project with a Validator implementation through a validation class. In stead of an Option, a Validation is returned, which combines validation results or exceptions and a real object representing the business result of a successful pipe execution. This perfectly fits with a Web service situation, where you want to validate your input and execute some logic, but you don't want Exceptions to bubble up to the caller in their original form. Validation errors have a direct impact on the returned response. There can be multiple sources that can return validation results. For the Validation i have added Join and JoinIfValid, which internally are Then-implementations. Join and JoinIfValid specify in a better way the purpose of a Validate pipeline.
+# Version 2.0.2. Join
+Added convenience Join method to join two pipesegments with the same output type.
+```
+    var hondaSegment = Pipe.Init<Car, Dealer>(_ => new Dealer())
+         .Then(c => c.SetMark(Car.HondaMark))
+         .Then(d => d.Reputation = Dealer.eReputation.Bad)
+          .Then(d => d.Name = dealerName);
+
+    var hondaDealerSegment = Pipe.Init<Car, Dealer>(() => dealer)
+         .Then(c => c.DriveFast());
+
+    var joinedPipe = hondaSegment
+         .Then(carDealer => dealer = carDealer.SupplementVal)
+        .Join(hondaDealerSegment);
+
+    var pipelineResult = (Option<Car, Dealer>)joinedPipe(new Car());
+```
+Pipe segments can be tested individually, making TDD an easy option.
