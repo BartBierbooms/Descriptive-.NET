@@ -23,6 +23,7 @@ namespace Piping.Test
             var pipelineResult = (Option<CarWithIInvariant, Unit>)pipeline(CreateCar());
 
             Assert.IsTrue(pipelineResult.GetOptionType == OptionType.Validation);
+
             Assert.IsTrue(pipelineResult.ValidationResult.ErrorMessage == CarWithIInvariant.InValidError);
         }
 
