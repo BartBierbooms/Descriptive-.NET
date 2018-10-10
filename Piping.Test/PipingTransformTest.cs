@@ -16,23 +16,29 @@ namespace Piping.Test
 		[TestMethod]
 		public void Join_PipeSegments()
 		{
+			Dealer dealer = null;
+			const string dealerName = "The Honda Dealer";
 
 			var hondaSegment = Pipe.Init<Car, Dealer>(_ => new Dealer())
 				.Then(c => c.SetMark(Car.HondaMark))
-				.Then(d => d.Reputation = Dealer.eReputation.Good);
+				.Then(d => d.Reputation = Dealer.eReputation.Bad)
+				.Then(d => d.Name = dealerName);
 
-			var hondaDealerSegment = Pipe.Init<Car, Dealer>(() => new Dealer())
+			var hondaDealerSegment = Pipe.Init<Car, Dealer>(() => dealer)
 				.Then(c => c.DriveFast());
 
-			var joinedPipe = hondaSegment.Join(hondaDealerSegment);
+			var joinedPipe = hondaSegment
+				.Then(carDealer => dealer = carDealer.SupplementVal)
+				.Join(hondaDealerSegment);
 
 			var pipelineResult = (Option<Car, Dealer>)joinedPipe(new Car());
 
 			Assert.IsTrue(pipelineResult.GetOptionType == OptionType.Some);
 			Assert.IsInstanceOfType(pipelineResult.Val, typeof(Car));
 			Assert.IsInstanceOfType(pipelineResult.SupplementVal, typeof(Dealer));
-			Assert.IsTrue(pipelineResult.SupplementVal.Reputation == Dealer.eReputation.Good);
-			Assert.IsTrue(pipelineResult.Val.Speed== Car.SpeedFast);
+			Assert.IsTrue(pipelineResult.SupplementVal.Reputation == Dealer.eReputation.Bad);
+			Assert.IsTrue(pipelineResult.SupplementVal.Name == dealerName);
+            Assert.IsTrue(pipelineResult.Val.Speed== Car.SpeedFast);
 
         }
 

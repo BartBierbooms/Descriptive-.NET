@@ -645,13 +645,13 @@ namespace Piping
 			});
 		}
         /// <summary>
-        /// Joins two pipe segments with identical output types. The output Value object of first pipeline serves as input for the second and the supplemented value of the first pipeline will be the Supplemented value of the second pipeline.
+        /// Joins two pipe segments with identical output types. The output Value object of first pipeline serves as input for the second.
         /// </summary>
         /// <typeparam name="TI">The type of the object that is passed into the pipeline delegate when invoked.</typeparam>
         /// <typeparam name="TV">The type of the object that is returned as the Val of the IValueAndSupplement interface.</typeparam>
         /// <typeparam name="TS">The type that is the Supplemented value of the source parameter and the the Supplemented value of the newPipeSegment parameter.</typeparam>
         /// <param name="source">The pipe source object of type ToValueSupplementValue.</param>
-        /// <param name="newPipeSegment">The pipesegment to join with the pipe source object.</param>
+        /// <param name="newPipeSegment">The pipe segment to join with the pipe source object.</param>
         /// <returns>An object of type ToValueSupplementValue (Func delegate that returns an object that implements the IValueAndSupplement interface when invoked with an object of type TI.</returns>
         public static ToValueSupplementValue<TI, TV, TS> Join<TI, TV, TS>(
             this ToValueSupplementValue<TI, TV, TS> source,
@@ -659,12 +659,12 @@ namespace Piping
             where TV : new()
             where TS : new()
         {
-			TV ToNewValue(TV pipeInut)
+			TV ToNewValue(TV pipeInput)
 			{
-				return pipeInut;
+				return pipeInput;
 			}
 
-			return source.Transform(ToNewValue, newPipeSegment, (TS suplementedValueSource, TS suplementedValuePipeSegment) => { suplementedValuePipeSegment = suplementedValueSource; });
+			return source.Transform(ToNewValue, newPipeSegment, (TS suplementedValueSource, TS suplementedValuePipeSegment) => {  });
 		}
 
         /// <summary>
